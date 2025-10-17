@@ -1,0 +1,306 @@
+
+
+================================================== # Requirements : Nvidia GPU card & and Cuda tool kit install
+ # I am using this card : https://amzn.to/3mTa7HX
+ # Working Anaconda enviroment
+  conda create -n Brain python=3.7
+ conda activate Brain
+  pip install tensorflow
+ pip install tensorflow-gpu
+  pip install numpy
+ pip install pillow
+ pip install SciPy
+ pip install matplotlib
+ pip install imutils
+ pip install pandas
+ pip install opencv-python
+   DataSet : 
+ =========
+  https://www.dropbox.com/s/jztol5j7hvm2w96/brain_tumor%20data%20set.zip
+
+### Import a symbol from a local module if needed by your environment.
+ from this import d
+  ### Import NumPy for numerical operations and random choice.
+ import numpy as np
+  ### Import pandas for potential tabular summaries.
+ import pandas as pd
+  ### Import Matplotlib for optional plotting.
+ import matplotlib.pyplot as plt
+  ### Import glob for file pattern matching utilities.
+ import glob
+  ### Import os for filesystem operations.
+ import os
+  ### Import shutil for high-level file copy operations.
+ import shutil
+  ### Import math for floor rounding when computing split sizes.
+ import math
+  ### Import imutils for optional image utilities if needed later.
+ import imutils
+   ### Define the root folder that contains class subfolders with images.
+ SEED_DATA_DIR = "C:/Python-cannot-upload-to-GitHub/BrainTumor"
+  ### Prepare a dictionary to hold the number of images per class.
+ num_of_images = {}
+  ### Iterate over class subfolders and count images in each.
+ for dir in os.listdir(SEED_DATA_DIR):
+     num_of_images[dir] = len(os.listdir(os.path.join(SEED_DATA_DIR, dir )))
+  ### Print a summary of class counts for verification.
+ print (num_of_images)
+  ### Document the target split: 70% train, 15% validate, 15% test.
+ #lets build 3 folders : 70% train data , 15% validate data , and 15% test
+  ### Define output folders for train, validate, and test splits.
+ TRAIN_DIR = "C:/Python-cannot-upload-to-GitHub/BrainTumor/train"
+ VALIDATE_DIR = "C:/Python-cannot-upload-to-GitHub/BrainTumor/validate"
+ TEST_DIR = "C:/Python-cannot-upload-to-GitHub/BrainTumor/test"
+   ### Create the train folder if it does not exist.
+ # create the train folder :
+ if not os.path.exists(TRAIN_DIR):
+     ### Make the train root directory.
+     os.mkdir(TRAIN_DIR)
+      ### For each class subfolder, create a corresponding class directory under train.
+     for dir in os.listdir(SEED_DATA_DIR):
+         os.makedirs(TRAIN_DIR + "/" + dir)
+         ### Log the newly created class path.
+         print (TRAIN_DIR + "/" + dir)
+          ### Randomly sample ~70% of images (minus 5 buffer) per class for training.
+         for img in np.random.choice(a=os.listdir(os.path.join(SEED_DATA_DIR,dir)) , size= (math.floor(70/100* num_of_images[dir] )-5) , replace=False ):
+             ### Source image path within the seed dataset.
+             O = os.path.join(SEED_DATA_DIR, dir , img)
+             ### Print source path for traceability.
+             print(O)
+             ### Destination class folder under train.
+             D = os.path.join(TRAIN_DIR, dir)
+             ### Print destination path for traceability.
+             print(D)
+             ### Copy the image into the train split.
+             shutil.copy(O,D)
+             ### Remove the copied image from seed to avoid duplication.
+             os.remove(O)
+ else:
+     ### If the train folder already exists, log and skip creation.
+     print("Train Folder Exists")
+    ### Create the test folder if it does not exist.
+ # create the test folder
+ if not os.path.exists(TEST_DIR):
+     ### Make the test root directory.
+     os.mkdir(TEST_DIR)
+      ### For each class, create a corresponding class subfolder under test.
+     for dir in os.listdir(SEED_DATA_DIR):
+         os.makedirs(TEST_DIR + "/" + dir)
+         ### Log the created path.
+         print (TEST_DIR + "/" + dir)
+          ### Randomly sample ~15% of images (minus 5 buffer) for testing.
+         for img in np.random.choice(a=os.listdir(os.path.join(SEED_DATA_DIR,dir)) , size= (math.floor(15/100* num_of_images[dir] )-5) , replace=False ):
+             ### Source image path.
+             O = os.path.join(SEED_DATA_DIR, dir , img)
+             ### Print source for visibility.
+             print(O)
+             ### Destination test class folder.
+             D = os.path.join(TEST_DIR, dir)
+             ### Print destination folder.
+             print(D)
+             ### Copy image to test split.
+             shutil.copy(O,D)
+             ### Remove original to prevent duplication.
+             os.remove(O)
+ else:
+     ### If the test folder exists, log and skip.
+     print("Test Folder Exists")
+   ### Create the validation folder if it does not exist.
+ # create the validate folder
+ if not os.path.exists(VALIDATE_DIR):
+     ### Make the validation root directory.
+     os.mkdir(VALIDATE_DIR)
+      ### For each class, create a validation class subfolder.
+     for dir in os.listdir(SEED_DATA_DIR):
+         os.makedirs(VALIDATE_DIR + "/" + dir)
+         ### Log the created path.
+         print (VALIDATE_DIR + "/" + dir)
+          ### Randomly sample ~15% of images (minus 5 buffer) for validation.
+         for img in np.random.choice(a=os.listdir(os.path.join(SEED_DATA_DIR,dir)) , size= (math.floor(15/100* num_of_images[dir] )-5) , replace=False ):
+             ### Source image path.
+             O = os.path.join(SEED_DATA_DIR, dir , img)
+             ### Print source for traceability.
+             print(O)
+             ### Destination validation class folder.
+             D = os.path.join(VALIDATE_DIR, dir)
+             ### Print destination folder.
+             print(D)
+             ### Copy image to validation split.
+             shutil.copy(O,D)
+             ### Remove original to avoid leakage between splits.
+             os.remove(O)
+ else:
+     ### If the validation folder exists, log and skip.
+     print("Validate Folder Exists")
+
+### Import optional pyplot utility.
+ from matplotlib.pyplot import cla
+  ### Import NumPy for array operations.
+ import numpy as np
+  ### Import Matplotlib for plotting training curves.
+ import matplotlib.pyplot as plt
+  ### Import core Keras layers for CNN building.
+ from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout, BatchNormalization, MaxPool2D, GlobalAveragePooling2D
+  ### Import Sequential model container.
+ from keras.models import Sequential
+  ### Import Keras image utilities and generators.
+ from keras.preprocessing import image
+  ### Import Keras root package for losses and optimizers.
+ import keras
+    ### Define paths to the prepared train and validation folders.
+ TRAIN_DIR = "C:/Python-cannot-upload-to-GitHub/BrainTumor/train"
+ VAL_DIR = "C:/Python-cannot-upload-to-GitHub/BrainTumor/validate"
+  ### Build a simple sequential CNN.
+ # build the CNN model
+ # ===================
+  ### Initialize the model.
+ model = Sequential()
+  ### First convolutional layer with 32 filters and ReLU activation.
+ model.add(Conv2D(filters=32, kernel_size=(3,3), activation='relu', input_shape = (224,224,3)    ))
+  ### Second convolutional layer to deepen representations.
+ model.add(Conv2D(filters=64, kernel_size=(3,3),  activation='relu' ))
+  ### Max pooling to downsample spatial dimensions.
+ model.add(MaxPool2D(pool_size=(2,2)))
+  ### Third convolutional block with 128 filters.
+ model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu' ))
+  ### Pooling to control feature map size.
+ model.add(MaxPool2D(pool_size=(2,2)))
+  ### Fourth convolutional block with 256 filters.
+ model.add(Conv2D(filters=256, kernel_size=(3,3),  activation='relu' ))
+  ### Pooling again to reduce dimensionality.
+ model.add(MaxPool2D(pool_size=(2,2)))
+  ### Dropout to reduce overfitting by randomly deactivating neurons.
+ model.add(Dropout(rate=0.25)))
+  ### Flatten feature maps for the dense classifier head.
+ model.add(Flatten())
+  ### Dense hidden layer for nonlinear combination of features.
+ model.add(Dense(units=64, activation='relu'))
+  ### Additional dropout to regularize the dense layer.
+ model.add(Dropout(rate=0.25))
+  ### Final output layer for binary classification with sigmoid activation.
+ #final layer:
+ model.add(Dense(units=1, activation='sigmoid'))
+  ### Compile the model with binary crossentropy and Adam optimizer.
+ model.compile(loss=keras.losses.binary_crossentropy, optimizer='adam', metrics=['accuracy'])
+  ### Print a summary of the architecture.
+ print(model.summary())
+   ### Configure the training data generator with augmentation and rescaling.
+ # create the train data augmentation object
+ # ==========================================
+ train_datagen = image.ImageDataGenerator(
+     zoom_range=0.2 , shear_range=0.2, rescale=1. / 255 , horizontal_flip=True
+ )
+  ### Validation data generator with rescaling only.
+ val_datagen = image.ImageDataGenerator( rescale= 1. / 255)
+  ### Create training batches from directory with target image size and labels.
+ train_data = train_datagen.flow_from_directory(directory=TRAIN_DIR , target_size=(224,224) , batch_size=32 , class_mode='binary')
+  ### Create validation batches similarly.
+ val_data = val_datagen.flow_from_directory(directory=VAL_DIR, target_size=(224,224), batch_size=32, class_mode='binary')
+    ### Import callbacks for early stopping and best-model checkpointing.
+ # create model check point for the performence of the model
+  from keras.callbacks import ModelCheckpoint , EarlyStopping
+   ### Configure early stopping on validation accuracy with patience.
+ # lets stop the training if the accuracy is good
+ es = EarlyStopping(monitor='val_accuracy', min_delta=0.01 , patience=5 , verbose=1 , mode='auto')
+  ### Save only the best model by validation accuracy.
+ mc = ModelCheckpoint(filepath='C:/Python-cannot-upload-to-GitHub/BrainTumor/MyBestModel.h5', monitor='val_accuracy' ,  verbose=1 , mode='auto' , save_best_only=True)
+   ### Bundle callbacks for training.
+ call_back = [es, mc]
+  ### Fit the model on training data with validation and callbacks.
+ hist = model.fit(x=train_data, epochs=30 , verbose=1, validation_data=val_data, callbacks=call_back)
+  ### Extract the training history dictionary.
+ h = hist.history
+  ### Inspect available metrics keys.
+ print('Keys : ', h.keys() )
+  ### Plot accuracy curves to compare train and validation.
+ #lets plot the accuracy and the loss
+ #===================================
+   ### Accuracy plot.
+ #accuracy 
+ plt.plot(h['accuracy'])
+ plt.plot(h['val_accuracy'], c='red')
+ plt.title('Accuracy vs. Val Accuracy')
+ plt.show()
+  ### Loss plot.
+ #loss
+ plt.plot(h['loss'])
+ plt.plot(h['val_loss'], c='red')
+ plt.title('loss vs. Val loss')
+ plt.show()
+
+### Comment summarizing the next steps for evaluation and prediction.
+ # now , we will check our model within a new test data
+ # than , we will run a prediction on an image
+  ### Import normalize symbol if needed by locale utilities.
+ from locale import normalize
+  ### Import NumPy for array handling.
+ import numpy as np
+  ### Import model loader for reading the saved best model.
+ from keras.models import load_model
+  ### Import Keras image utilities for preprocessing.
+ from keras.preprocessing import image
+  ### Import Keras for base symbols if needed.
+ import keras
+  ### Import OpenCV for image I/O and drawing text on predictions.
+ import cv2
+  ### Path to the held-out test directory.
+ TEST_DIR = "C:/Python-cannot-upload-to-GitHub/BrainTumor/test"
+  ### Define a test data generator with rescaling.
+ test_datagen = image.ImageDataGenerator( rescale= 1. / 255)
+  ### Create test batches from directory for evaluation.
+ test_data = test_datagen.flow_from_directory(directory=TEST_DIR , target_size=(224,224) , batch_size=32 , class_mode='binary')
+  ### Display the class-to-index mapping for clarity.
+ # lets print the classes :
+ print("test_data.class_indices: ", test_data.class_indices)
+  ### Load the best saved model from training.
+ #load the saved model :
+ model = load_model('C:/Python-cannot-upload-to-GitHub/BrainTumor/MyBestModel.h5')
+  ### Optionally inspect the model structure.
+ #print(model.summary() )
+  ### Evaluate accuracy on the test generator and take the accuracy component.
+ acc = model.evaluate(x=test_data)[1]
+  ### Print test accuracy for record.
+ print(acc)
+    ### Pick a single image path from the test set for demonstration.
+ # load an image from the test folder 
+ imagePath = "C:/Python-cannot-upload-to-GitHub/BrainTumor/test/Healthey/Not Cancer  (1523).jpg"
+ #imagePath = "C:/Python-cannot-upload-to-GitHub/BrainTumor/test/Brain Tumor/Cancer (17).jpg"
+  ### Load the image and resize to the model target.
+ img = image.load_img(imagePath,target_size=(224,224))
+  ### Convert the PIL image to a NumPy array.
+ i = image.img_to_array(img) # convert to array
+  ### Normalize pixel values to match training rescale.
+ i = i / 255 # -> normalize to our model
+  ### Confirm the shape of a single image array.
+ print(i.shape)
+  ### Add a batch dimension for prediction.
+ input_arr = np.array([i]) # add another dimention 
+  ### Confirm the batch shape expected by the model.
+ print(input_arr.shape)
+   ### Run the forward pass to get a sigmoid probability.
+ # run the prediction
+ predictions = model.predict(input_arr)[0][0]
+  ### Print the raw score for inspection.
+ print(predictions)
+   ### Convert sigmoid score to a binary label for readability.
+ # since it is binary if the result is close to 0 it is Tumor , and if it close to 1 it is healthy
+ result = round(predictions)
+  ### Map the numeric label to a human-readable string.
+ if result == 0 :
+     text = 'Has a brain tumor'
+ else :
+     text = "Brain healthy"
+   ### Print the final decision text.
+ print(text)
+  ### Read the original image with OpenCV for annotation.
+ imgResult = cv2.imread(imagePath)
+  ### Choose a font for overlay.
+ font = cv2.FONT_HERSHEY_COMPLEX
+  ### Draw the prediction on the image.
+ cv2.putText(imgResult, text, (0,20), font, 0.8 , (255,0,0),2 )
+  ### Show the annotated image in a window.
+ cv2.imshow('img', imgResult)
+  ### Wait for a key press to close the window.
+ cv2.waitKey(0)
+  ### Save the annotated prediction image to disk.
+ cv2.imwrite("C:/Python-cannot-upload-to-GitHub/BrainTumor/predictImage.jpg",imgResult)
