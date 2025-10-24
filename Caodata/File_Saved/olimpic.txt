@@ -1,0 +1,229 @@
+
+
+==================================================# ================================
+ # Code 1: Dataset Splitter (Olympics dataset example)
+ # ================================
+  # --- 1.1 Imports & high-level settings ---
+  # 1.1.1 Import standard libraries for filesystem work, copying files, and randomness
+ import os 
+ import shutil 
+ import random 
+  # 1.1.2 Define the intended split ratio: 90% train, 10% test (descriptive comment)
+ # 90% of the dataset -> train folder 
+ # 10% of the dataset -> test folder 
+   # --- 1.2 Configure dataset paths ---
+  # 1.2.1 Path to the main dataset folder (source)
+ main_folder = 'e:/data-sets/olympics'
+  # 1.2.2 Paths to train and test destination folders
+ train_folder = 'e:/data-sets/olympics-train'
+ test_folder = 'e:/data-sets/olympics-test'
+   # --- 1.3 Ensure destination folders exist ---
+  # 1.3.1 Create train folder if missing
+ os.makedirs(train_folder , exist_ok=True)
+ # 1.3.2 Create test folder if missing
+ os.makedirs(test_folder , exist_ok=True)
+   # --- 1.4 Discover class subfolders in the source ---
+  # 1.4.1 Initialize list to hold class folder paths
+ subfolders = []
+  # 1.4.2 Loop through items in main dataset folder
+ for f in os.scandir(main_folder):
+     # 1.4.3 If it's a folder (class/category), add to list
+     if f.is_dir():
+         subfolders.append(f.path)
+   # --- 1.5 Define split percentage ---
+  # 1.5.1 Percentage of files for training set
+ train_precentage = 90
+   # --- 1.6 Per-class processing: create dirs, list/shuffle files, compute split ---
+  # 1.6.1 Loop over each class/category subfolder
+ for subfolder in subfolders:
+      # 1.6.2 Extract class folder name
+     subfolder_name = os.path.basename(subfolder)
+      # 1.6.3 Paths for train/test subfolders for this class
+     train_subfolder = os.path.join(train_folder , subfolder_name)
+     test_subfolder = os.path.join(test_folder , subfolder_name)
+      # 1.6.4 Create class subfolder in train/test directories
+     os.makedirs(train_subfolder , exist_ok=True)
+     os.makedirs(test_subfolder , exist_ok=True)
+      # 1.6.5 List all files in this class folder
+     files = [f.path for f in os.scandir(subfolder) if f.is_file()]
+      # 1.6.6 Randomize file order
+     random.shuffle(files)
+      # 1.6.7 Calculate number of train files
+     num_train_files = int( len(files) * (train_precentage / 100) )
+      # 1.6.8 Copy train files
+     for file in files[:num_train_files]:
+         shutil.copy(file, os.path.join(train_subfolder , os.path.basename(file)))
+      # 1.6.9 Copy test files
+     for file in files[num_train_files:]:
+         shutil.copy(file, os.path.join(test_subfolder , os.path.basename(file)))       
+   # --- 1.7 Final status message ---
+  # 1.7.1 Print confirmation
+ print("Finish copy the files to Train and Test subfolder")
+
+# ================================
+ # Code 2: Training EfficientNetV2S on Olympics Dataset
+ # ================================
+  # --- 2.1 Imports & configuration ---
+  # 2.1.1 Import TensorFlow and Keras layers API
+ import tensorflow as tf 
+ from tensorflow.keras import layers
+ from tensorflow.keras.preprocessing.image import ImageDataGenerator 
+  # 2.1.2 Import supporting libraries
+ import numpy as np 
+ import os
+ import matplotlib.pyplot as plt 
+  # 2.1.3 Define target image size (all images resized to 224x224)
+ IMAGE_SIZE = 224
+   # --- 2.2 Load class names & count ---
+  # 2.2.1 Path to dataset folder containing class subfolders
+ imageFolder = 'e:/data-sets/olympics'
+  # 2.2.2 Get a list of class names (folder names)
+ CLASSES = os.listdir(imageFolder)
+  # 2.2.3 Count number of classes
+ num_classes = len(CLASSES)
+  # 2.2.4 Print class names
+ print(CLASSES)
+ # 2.2.5 Print number of classes
+ print(num_classes)
+   # --- 2.3 Load pre-trained base model (EfficientNetV2S) ---
+  # 2.3.1 Load EfficientNetV2S without the top classification layer
+ # weights='imagenet' uses ImageNet pretrained weights
+ # input_shape matches resized images
+ # include_top=False removes the 1000-class output layer
+ base_model = tf.keras.applications.EfficientNetV2S(
+     weights='imagenet', 
+     input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3), 
+     include_top=False
+ )
+  # 2.3.2 Allow all layers to be trainable (fine-tuning)
+ base_model.trainable = True
+   # --- 2.4 Build the full model ---
+  # 2.4.1 Create a sequential model combining the base and new layers
+ model = tf.keras.Sequential([ 
+     base_model,                                # Pre-trained feature extractor
+     layers.GlobalAveragePooling2D(),           # Pool features to vector
+     layers.Dense(1024, activation='relu'),     # Dense layer for learning patterns
+     layers.Dropout(0.5),                       # Dropout for regularization
+     layers.Dense(num_classes, activation='softmax')  # Output layer for our classes
+ ])
+   # --- 2.5 Compile the model ---
+  # 2.5.1 Import Adam optimizer
+ from tensorflow.keras.optimizers import Adam
+  # 2.5.2 Create Adam optimizer with a small learning rate for transfer learning
+ adam_opt = Adam(learning_rate = 0.0001)
+  # 2.5.3 Compile model with categorical crossentropy (multi-class classification)
+ model.compile(
+     optimizer=adam_opt, 
+     loss='categorical_crossentropy', 
+     metrics=['accuracy']
+ )
+   # --- 2.6 Data generators (augmentation for training) ---
+  # 2.6.1 Create training data generator with augmentation
+ train_datagen = ImageDataGenerator(
+     rescale=1./255,          # Normalize pixel values
+     shear_range=0.2,         # Random shearing
+     zoom_range=0.2,          # Random zoom
+     horizontal_flip=True     # Flip images horizontally
+ )
+  # 2.6.2 Create testing/validation data generator (no augmentation, only rescale)
+ test_datagen = ImageDataGenerator(rescale=1./255)
+  # 2.6.3 Paths to split datasets
+ train_folder = 'e:/data-sets/olympics-train'
+ test_folder = 'e:/data-sets/olympics-test'
+  # 2.6.4 Training set generator
+ train_generator = train_datagen.flow_from_directory(
+     train_folder, 
+     target_size=(IMAGE_SIZE, IMAGE_SIZE),
+     batch_size=8,
+     class_mode='categorical',
+     color_mode='rgb',
+     shuffle=True
+ )
+  # 2.6.5 Validation/test set generator
+ test_generator = test_datagen.flow_from_directory(
+     test_folder, 
+     target_size=(IMAGE_SIZE, IMAGE_SIZE),
+     batch_size=8,
+     class_mode='categorical',
+     color_mode='rgb'
+ )
+   # --- 2.7 Training parameters & callbacks ---
+  # 2.7.1 Number of epochs for training
+ EPOCHS = 300
+  # 2.7.2 Filepath to save the best model
+ best_model_file = 'e:/temp/olympics-EfficientNetV2.h5'
+  # 2.7.3 Import callbacks
+ from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+  # 2.7.4 Define callbacks
+ callbacks = [
+     # Save the best model based on validation accuracy
+     ModelCheckpoint(best_model_file, verbose=1, save_best_only=True, monitor="val_accuracy"),
+     # Reduce learning rate if validation accuracy plateaus
+     ReduceLROnPlateau(monitor="val_accuracy", patience=25, factor=0.1, verbose=1, min_lr=1e-6),
+     # Stop training early if no improvement
+     EarlyStopping(monitor="val_accuracy", patience=25, verbose=1)
+ ]
+   # --- 2.8 Train the model ---
+  # 2.8.1 Fit model on training data with validation
+ result = model.fit(
+     train_generator, 
+     epochs=EPOCHS, 
+     validation_data=test_generator, 
+     callbacks=callbacks
+ )
+   # --- 2.9 Find best validation accuracy ---
+  # 2.9.1 Epoch index of best validation accuracy
+ best_val_acc_epoch = np.argmax(result.history['val_accuracy'])
+  # 2.9.2 Best validation accuracy value
+ best_val_acc = result.history['val_accuracy'][best_val_acc_epoch]
+  # 2.9.3 Print best validation accuracy
+ print("Best validation accuracy : " + str(best_val_acc))
+   # --- 2.10 Plot accuracy curves ---
+  # 2.10.1 Plot training vs validation accuracy
+ plt.plot(result.history['accuracy'], label='train acc')
+ plt.plot(result.history['val_accuracy'], label='val acc')
+ plt.legend()
+ plt.show()
+   # --- 2.11 Plot loss curves ---
+  # 2.11.1 Plot training vs validation loss
+ plt.plot(result.history['loss'], label='train loss')
+ plt.plot(result.history['val_loss'], label='val loss')
+ plt.legend()
+ plt.show()
+
+import tensorflow as tf 
+ import cv2 
+ import os 
+  from keras.utils import load_img , img_to_array 
+ import numpy as np 
+  IMAGE_SIZE = 224
+  # get the classes 
+ imageFolder = 'e:/data-sets/olympics'
+ CLASSES = os.listdir(imageFolder)
+ num_classes = len(CLASSES)
+  best_model_file = 'e:/temp/olympics-EfficientNetV2.h5'
+ model = tf.keras.models.load_model(best_model_file)
+  def prepareImage(pathForImage) :
+     image = load_img(pathForImage , target_size=(IMAGE_SIZE, IMAGE_SIZE))
+     img_result = img_to_array(image)
+     img_result = np.expand_dims(img_result , axis=0)
+     img_result = img_result / 255.
+     return img_result
+   testImagePath = "Best-image-classification-models/EfficientNetv2-Build-Model-Custom-Dataset/waterpolo-test-image.png"
+ img = cv2.imread(testImagePath)
+  ImgForModel = prepareImage(testImagePath)
+ resultArray = model.predict(ImgForModel , verbose=1)
+ answer = np.argmax(resultArray , axis=1)
+  print(answer)
+ index = answer[0]
+ desc = CLASSES[index]
+  print("The predicted class is : " + desc)
+   scale_precent = 60
+ width = int(img.shape[1] * scale_precent / 100)
+ height = int(img.shape[0] * scale_precent / 100)
+ dim = (width, height)
+ resized = cv2.resize(img, dim , interpolation = cv2.INTER_AREA)
+  cv2.putText(resized , desc , (10,100), cv2.FONT_HERSHEY_SIMPLEX, 1.6, (255,0,0), 3 , cv2.LINE_AA)
+  cv2.imwrite("e:/temp/waterpolo.png" , resized)
+  cv2.imshow('img', resized)
+ cv2.waitKey(0)

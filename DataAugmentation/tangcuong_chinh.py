@@ -68,3 +68,4 @@ total_augmented_count = len(os.listdir(OUTPUT_DIR))
 print(f"[INFO] Hoàn thành tăng cường dữ liệu.")
 print(f"[INFO] Tổng số ảnh mới được tạo: {total_augmented_count}")
 print(f"[INFO] Tổng (gốc + mới): {total_original_images + total_augmented_count}")
+

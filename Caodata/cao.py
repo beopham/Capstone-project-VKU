@@ -21,9 +21,9 @@ DRIVER_PATH = os.path.join(BASE_PROJECT_DIR, "chromedriver", "chromedriver.exe")
 
 # 2. Đường dẫn file đầu ra (Nằm trong Caodata/File_Saved)
 OUTPUT_DIR = os.path.join(CAODATA_DIR, "File_Saved")
-FILE_PATH = os.path.join(OUTPUT_DIR, "brain_tumor_code_selenium.txt")
+FILE_PATH = os.path.join(OUTPUT_DIR, "olimpic.txt")
 
-URL = "https://eranfeit.net/brain-tumor-classification-using-deep-learning/"
+URL = "https://eranfeit.net/olympic-sports-image-classification-with-tensorflow-efficientnetv2/"
 
 
 def scrape_code_with_selenium(url):
