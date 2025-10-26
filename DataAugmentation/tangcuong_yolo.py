@@ -3,8 +3,9 @@ import cv2
 import albumentations as A
 from tqdm import tqdm  # thanh tiến trình cho vui
 
-input_dir = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\input\New Castle Disease"
-output_dir = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\output\Tang_cuong_New Castle Disease"
+input_dir = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\input\Sal"
+output_dir = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\output\Tangcuong_sal"
+
 os.makedirs(output_dir, exist_ok=True)
 
 # ⚙️ Cấu hình augmentations

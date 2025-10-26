@@ -3,7 +3,7 @@ import os
 # 🗂️ Đường dẫn tới thư mục chứa ảnh
 folder = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\Data_chicken\Data\New Castle Disease"
 
-prefix = "ncd"  # tiền tố tên ảnh (mày có thể đổi tuỳ ý, ví dụ: ncd, nc, newcastle...)
+prefix = "ncd"  # tiền tố tên ảnh (mày có thể đổi tuỳ ý, ví - dụ: ncd, nc, newcastle...)
 
 # Lấy danh sách tất cả ảnh trong thư mục (lọc đuôi ảnh)
 files = [f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
