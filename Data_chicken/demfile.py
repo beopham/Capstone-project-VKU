@@ -28,7 +28,7 @@ CURRENT_FILE_PATH = os.path.abspath(__file__)
 # Lùi 2 cấp để về thư mục gốc Capstone-project-VKU
 BASE_PROJECT_DIR = os.path.dirname(os.path.dirname(CURRENT_FILE_PATH))
 
-# Đường dẫn đến thư mục 'train' (Giả định: Capstone-project-VKU/Data/train)
+# Đường dẫn đến thư mục 'train' (Giả định: Capstone-project-VKU/Data/train)--
 # Bạn cần điều chỉnh phần này nếu cấu trúc khác
 TRAIN_FOLDER_PATH = os.path.join(BASE_PROJECT_DIR, "Data_chicken", "New Castle Disease")
 

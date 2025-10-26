@@ -3,7 +3,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import load_img, img_to_array
 import numpy as np
 
-# Nạp ảnh đầu vào và convert vào mảng NumPy rồi thay đổi kích thước, xác định chiều
+# Nạp ảnh đầu vào và convert vào mảng NumPy rồi thay đổi kích thước, xác định chiều ---
 print("[INFO] Nạp ảnh...")
 image = load_img("input/cat.jpg")   # Đường dẫn chứa ảnh đầu vào
 image = img_to_array(image)

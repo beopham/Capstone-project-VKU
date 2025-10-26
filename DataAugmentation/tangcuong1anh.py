@@ -41,7 +41,7 @@ print("[INFO] Bắt đầu quá trình tăng cường dữ liệu...")
 print(f"[INFO] File ảnh gốc: {INPUT_FILE_PATH}")
 print(f"[INFO] Thư mục lưu trữ ảnh mới: {OUTPUT_DIR}")
 
-# --- XỬ LÝ MỘT ẢNH DUY NHẤT ---
+# --- XỬ LÝ MỘT ẢNH DUY NHẤT -----
 # Nạp ảnh gốc
 image = cv2.imread(INPUT_FILE_PATH)
 

@@ -9,7 +9,7 @@ OUTPUT_DIR = "output/Tang_cuong_New Castle Disease" # Thư mục chứa ảnh t�
 NUM_AUGMENTED_IMAGES_PER_ORIGINAL = 4  # Số ảnh mới tạo từ mỗi ảnh gốc
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-# ----------------
+# -------------------
 
 # --- ĐỊNH NGHĨA PHÉP BIẾN ĐỔI (augmentation pipeline) ---
 transform = A.Compose([
