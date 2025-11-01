@@ -2,7 +2,7 @@ import os
 from PIL import Image
 import imagehash
 
-folder =r"D:\Hoc Ki Cuoi\Capstone-project-VKU\Data_new\New Castle Disease"  # ✅ thay đường dẫn thư mục
+folder = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\Data_new\Coccidiosis"  # ✅ thay đường dẫn thư mục
 
 hash_dict = {}
 

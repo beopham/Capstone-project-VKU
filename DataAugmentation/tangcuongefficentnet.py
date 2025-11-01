@@ -3,8 +3,8 @@ import os
 import albumentations as A
 
 # --- CẤU HÌNH ---
-INPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\input\healthy"
-OUTPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\output\Tangcuong_healthy"
+INPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\input\coc"
+OUTPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\output\Tangcuong_coc"
 
 NUM_AUGMENTED_IMAGES_PER_ORIGINAL = 5
 
