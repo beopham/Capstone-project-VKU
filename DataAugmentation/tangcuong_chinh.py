@@ -4,9 +4,9 @@ import numpy as np
 import albumentations as A
 
 # --- CẤU HÌNH ---
-INPUT_DIR = "input/New Castle Disease"   # Thư mục chứa ảnh gốc
-OUTPUT_DIR = "output/Tang_cuong_New Castle Disease" # Thư mục chứa ảnh tăng cường
-NUM_AUGMENTED_IMAGES_PER_ORIGINAL = 4  # Số ảnh mới tạo từ mỗi ảnh gốc
+INPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\input\sal"
+OUTPUT_DIR =r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\output\Tangcuong_sal"
+NUM_AUGMENTED_IMAGES_PER_ORIGINAL = 5  # Số ảnh mới tạo từ mỗi ảnh gốc
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 # -------------------
