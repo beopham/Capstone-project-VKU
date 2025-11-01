@@ -2,7 +2,7 @@ import os
 from PIL import Image
 import imagehash
 
-folder = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\Data_new\Coccidiosis"  # ✅ thư mục ảnh
+folder = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\Data_new\New Castle Disease"  # ✅ thư mục ảnh
 hash_dict = {}
 
 for file in os.listdir(folder):

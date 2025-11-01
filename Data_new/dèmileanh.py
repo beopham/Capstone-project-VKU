@@ -1,6 +1,6 @@
 import os
 
-folder = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\Data_new\Coccidiosis"
+folder = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\Data_new\New Castle Disease"
 
 # Các đuôi file ảnh muốn tính
 image_exts = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff"}

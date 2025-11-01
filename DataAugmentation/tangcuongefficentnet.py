@@ -3,11 +3,10 @@ import os
 import albumentations as A
 
 # --- CẤU HÌNH ---
-INPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\input\coc"
-OUTPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\output\Tangcuong_coc"
+INPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\input\ncd11"
+OUTPUT_DIR = r"D:\Hoc Ki Cuoi\Capstone-project-VKU\DataAugmentation\output\tc_new"
 
-NUM_AUGMENTED_IMAGES_PER_ORIGINAL = 5
-
+NUM_AUGMENTED_IMAGES_PER_ORIGINAL = 7
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # --- PIPELINE ---
